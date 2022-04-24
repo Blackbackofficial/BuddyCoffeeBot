@@ -1,8 +1,7 @@
-import telebot
 from telebot import types
-from const import WELCOME_MESS, ABOUT, NETWORK_CAREER
-
-bot = telebot.TeleBot("")
+from internal.const import WELCOME_MESS, ABOUT, NETWORK_CAREER
+from internal.questionnaire import applicant_questionnaire
+from config.conf import bot
 
 
 def main():
@@ -20,16 +19,14 @@ def main():
     def callback(call):
         if call.message:
             if call.data == 'questionnaire':
-                bot.send_message(call.message.chat.id, text="Привеет.. Спасибо что читаешь статью!)")
+                applicant_questionnaire(call.message)
             elif call.data == 'about':
                 bot.send_message(call.message.chat.id, text=ABOUT)
             elif call.data == 'network_career':
                 markup = types.InlineKeyboardMarkup()
-                btn1 = types.InlineKeyboardButton('ВКонтакте', url='https://vk.com/rosatomcareer')
-                btn2 = types.InlineKeyboardButton('Instagram', url='https://www.instagram.com/rosatom_career/?hl=ru')
-                btn3 = types.InlineKeyboardButton('Назад', callback_data="back")
-                markup.row(btn1, btn2)
-                markup.row(btn3)
+                markup.row(types.InlineKeyboardButton('ВКонтакте', url='https://vk.com/rosatomcareer'),
+                           types.InlineKeyboardButton('Instagram', url='https://www.instagram.com/rosatom_career/?hl=ru'))
+                markup.row(types.InlineKeyboardButton('Назад', callback_data="back"))
                 bot.send_message(call.message.chat.id, text=NETWORK_CAREER, reply_markup=markup)
             elif call.data == 'back':
                 send_welcome(call.message)
